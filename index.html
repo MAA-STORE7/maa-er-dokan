@@ -22,9 +22,6 @@
     
     .btn-pdf { background-color: #007bff; }
     .btn-pdf:hover { background-color: #0056b3; }
-    
-    .btn-logout { background-color: #dc3545; width: auto; float: right; padding: 6px 12px; font-size: 14px; margin-top: 0; }
-    .btn-logout:hover { background-color: #bd2130; }
 
     /* SIRF UDHAR CHUNNE PAR HI DIKHEGA */
     #personGroup { display: none; background: #eff6ff; padding: 12px; border-radius: 6px; border: 2px solid #3b82f6; }
@@ -34,21 +31,9 @@
     .summary-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     .summary-table th, .summary-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
     .summary-table th { background-color: #f2f2f2; }
-    
-    .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .user-email { font-size: 14px; color: #555; font-weight: bold; }
   </style>
 </head>
 <body>
-
-  <!-- Top Navigation & User Info -->
-  <div class="card header-bar">
-    <div>
-      <span>User: </span>
-      <span class="user-email" id="userEmailLabel">Loading...</span>
-    </div>
-    <button class="btn-logout" onclick="logoutUser()">Logout</button>
-  </div>
 
   <!-- Daily Entry Form Card -->
   <div class="card">
@@ -86,7 +71,7 @@
         <textarea id="description" rows="2" placeholder="Koi detail (Optional)"></textarea>
       </div>
 
-      <button type="submit">Save Entry</button>
+      <button type="submit" id="saveBtn">Save Entry</button>
     </form>
   </div>
 
@@ -131,17 +116,10 @@
 
   <script src="app.js"></script>
   <script>
-    // Protect Route: Logged in nahi hai toh login.html par bhej do
-    window.addEventListener('DOMContentLoaded', async () => {
-      const session = await getSession();
-      if (!session) {
-        window.location.href = 'login.html';
-        return;
-      }
-      document.getElementById('userEmailLabel').innerText = session.user.email;
-
-      // Default Date Set
+    window.addEventListener('DOMContentLoaded', () => {
+      // Default Date Set (Today)
       document.getElementById('date').valueAsDate = new Date();
+      
       const now = new Date();
       document.getElementById('reportMonth').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       
@@ -152,7 +130,7 @@
     const personGroup = document.getElementById('personGroup');
     const personInput = document.getElementById('person_name');
 
-    // Person Box Visibility Check
+    // Person Box Visibility Logic
     function updateFieldVisibility() {
       const selectedType = typeSelect.value;
       if (selectedType === 'debt' || selectedType === 'debt_repayment') {
@@ -167,9 +145,13 @@
 
     typeSelect.addEventListener('change', updateFieldVisibility);
 
-    // Save Daily Record Handler
+    // Save Record Handler
     document.getElementById('trackerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.innerText = "Saving...";
 
       const date = document.getElementById('date').value;
       const type = typeSelect.value;
@@ -197,10 +179,13 @@
         updateFieldVisibility();
       } catch (err) {
         alert('Error: ' + err.message);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Save Entry";
       }
     });
 
-    // PDF Generator
+    // PDF Report Generator Logic
     async function generatePDF() {
       const monthVal = document.getElementById('reportMonth').value;
       if (!monthVal) return alert("Month select karein!");
@@ -267,7 +252,7 @@
 
       html2pdf().set({
         margin: 10,
-        filename: `Customer_Udhar_Report_${monthVal}.pdf`,
+        filename: `Financial_Report_${monthVal}.pdf`,
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       }).from(element).save().then(() => {
