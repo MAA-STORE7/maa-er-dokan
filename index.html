@@ -19,10 +19,8 @@
     .btn-pdf { background-color: #007bff; }
     .btn-pdf:hover { background-color: #0056b3; }
 
-    /* SIRF UDHAR SELECTION PAR HI DIKHEGA */
     #personGroup { display: none; background: #eff6ff; padding: 12px; border-radius: 6px; border: 2px solid #3b82f6; }
     
-    /* PDF Layout Styling */
     #pdfContent { background: white; padding: 20px; border: 1px solid #eee; display: none; }
     .summary-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     .summary-table th, .summary-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -47,7 +45,7 @@
           <option value="purchase">Purchase (Kharidari)</option>
           <option value="expense">Expense (Kharcha)</option>
           <option value="debt">Debt Given (Udhar Diya)</option>
-          <option value="debt_repayment">Debt Received (Udhar Wapas Mila / Minus)</option>
+          <option value="debt_repayment">Debt Received (Udhar Wapas Mila)</option>
         </select>
       </div>
 
@@ -109,14 +107,12 @@
     </table>
   </div>
 
-  <!-- CDN Libraries Sabse Pehle Load Hongi -->
+  <!-- CDN Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- app.js CDN ke baad load hoga -->
   <script src="app.js"></script>
 
-  <!-- Main Application Logic -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('date').valueAsDate = new Date();
@@ -145,7 +141,7 @@
 
     typeSelect.addEventListener('change', updateFieldVisibility);
 
-    // Save Entry Logic
+    // Save Entry Handler (Separate Tables Insertion)
     document.getElementById('trackerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -157,27 +153,32 @@
       const type = typeSelect.value;
       const amount = parseFloat(document.getElementById('amount').value);
       const description = document.getElementById('description').value;
-      let person_name = null;
-      let customer_id = null;
 
       try {
         if (!supabaseClient) {
-          throw new Error("Supabase Client Load Nahi Hua. app.js me Credentials Check Karein!");
+          throw new Error("Supabase Client load nahi hua hai!");
         }
 
-        if (type === 'debt' || type === 'debt_repayment') {
-          person_name = personInput.value.trim();
+        let error = null;
+
+        // Routing entry to separate tables
+        if (type === 'sell') {
+          ({ error } = await supabaseClient.from('sales').insert([{ date, amount, description }]));
+        } else if (type === 'purchase') {
+          ({ error } = await supabaseClient.from('purchases').insert([{ date, amount, description }]));
+        } else if (type === 'expense') {
+          ({ error } = await supabaseClient.from('expenses').insert([{ date, amount, description }]));
+        } else if (type === 'debt' || type === 'debt_repayment') {
+          const person_name = personInput.value.trim();
           if (!person_name) throw new Error('Bande ka NAAM zaroor bharein!');
-          customer_id = await getOrCreateCustomer(person_name);
+          
+          const customer_id = await getOrCreateCustomer(person_name);
+          ({ error } = await supabaseClient.from('daily_records').insert([{ date, type, customer_id, person_name, amount, description }]));
         }
-
-        const { error } = await supabaseClient
-          .from('daily_records')
-          .insert([{ date, type, customer_id, person_name, amount, description }]);
 
         if (error) throw error;
 
-        alert('Entry successfully save ho gayi!');
+        alert('Entry corresponding table me successful save ho gayi!');
         document.getElementById('amount').value = '';
         document.getElementById('description').value = '';
         personInput.value = '';
@@ -190,7 +191,7 @@
       }
     });
 
-    // PDF Generator Logic
+    // PDF Generator Handler (Combines Data from All Tables)
     async function generatePDF() {
       const monthVal = document.getElementById('reportMonth').value;
       if (!monthVal) return alert("Month select karein!");
@@ -200,28 +201,21 @@
       const endDate = new Date(year, month, 0).toISOString().split('T')[0];
 
       try {
-        const { data: records, error: recErr } = await supabaseClient
-          .from('daily_records')
-          .select('*')
-          .gte('date', startDate)
-          .lte('date', endDate);
+        // Fetch from 3 Separate Tables & Customer Ledger View
+        const [salesRes, purchaseRes, expenseRes, ledgerRes] = await Promise.all([
+          supabaseClient.from('sales').select('amount').gte('date', startDate).lte('date', endDate),
+          supabaseClient.from('purchases').select('amount').gte('date', startDate).lte('date', endDate),
+          supabaseClient.from('expenses').select('amount').gte('date', startDate).lte('date', endDate),
+          supabaseClient.from('customer_ledger').select('*')
+        ]);
 
-        if (recErr) throw recErr;
+        if (salesRes.error) throw salesRes.error;
+        if (purchaseRes.error) throw purchaseRes.error;
+        if (expenseRes.error) throw expenseRes.error;
 
-        const { data: ledger, error: ledErr } = await supabaseClient
-          .from('customer_ledger')
-          .select('*');
-
-        if (ledErr) throw ledErr;
-
-        let totalSales = 0, totalPurchase = 0, totalExpense = 0;
-
-        (records || []).forEach(item => {
-          const amt = parseFloat(item.amount);
-          if (item.type === 'sell') totalSales += amt;
-          if (item.type === 'purchase') totalPurchase += amt;
-          if (item.type === 'expense') totalExpense += amt;
-        });
+        const totalSales = (salesRes.data || []).reduce((sum, item) => sum + parseFloat(item.amount), 0);
+        const totalPurchase = (purchaseRes.data || []).reduce((sum, item) => sum + parseFloat(item.amount), 0);
+        const totalExpense = (expenseRes.data || []).reduce((sum, item) => sum + parseFloat(item.amount), 0);
 
         document.getElementById('pdfMonthLabel').innerText = `Report Period: ${monthVal}`;
         document.getElementById('pdfSales').innerText = totalSales.toFixed(2);
@@ -231,7 +225,7 @@
         const debtTbody = document.getElementById('pdfDebtRows');
         debtTbody.innerHTML = '';
 
-        (ledger || []).forEach(cust => {
+        (ledgerRes.data || []).forEach(cust => {
           const given = parseFloat(cust.total_udhar_diya || 0);
           const received = parseFloat(cust.total_wapas_mila || 0);
           const remaining = parseFloat(cust.net_baaki_amount || 0);
