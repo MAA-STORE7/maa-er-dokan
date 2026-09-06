@@ -1,7 +1,7 @@
 // ================= SUPABASE CLIENT INITIALIZATION =================
 // Vercel Environment variables or Direct Keys Fallback
-const SUPABASE_URL = window.ENV_SUPABASE_URL || 'YOUR_SUPABASE_URL';
-const SUPABASE_ANON_KEY = window.ENV_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
+const SUPABASE_URL = window.ENV_SUPABASE_URL || 'https://uihuyajthjhynhlclnah.supabase.co';
+const SUPABASE_ANON_KEY = window.ENV_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVpaHV5YWp0aGpoeW5obGNsbmFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3MTQwNzEsImV4cCI6MjEwNDI5MDA3MX0.oku8fxQrjqnayQvPoeF1BetwHtEtz-A_VMUQuLDFp2g';
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
