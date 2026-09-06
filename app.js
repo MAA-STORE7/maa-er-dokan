@@ -5,22 +5,11 @@ const SUPABASE_ANON_KEY = window.ENV_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KE
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Helper: Check Auth Session
-async function getSession() {
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  return session;
-}
-
-// Helper: Logout User
-async function logoutUser() {
-  await supabaseClient.auth.signOut();
-  window.location.href = 'login.html';
-}
-
-// Helper: Get or Create Customer ID
+// Helper: Get or Create Customer ID (Auto Handles Duplicate Customer Names)
 async function getOrCreateCustomer(name) {
   const cleanName = name.trim();
   
+  // 1. Existing Customer Check
   let { data: existing } = await supabaseClient
     .from('customers')
     .select('id, name')
@@ -31,6 +20,7 @@ async function getOrCreateCustomer(name) {
     return existing.id;
   }
 
+  // 2. Insert New Customer
   let { data: newCust, error } = await supabaseClient
     .from('customers')
     .insert([{ name: cleanName }])
