@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daily Finance & Udhar Tracker</title>
 
-  <!-- Supabase & HTML2PDF Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -23,10 +22,10 @@
     .btn-pdf { background-color: #007bff; }
     .btn-pdf:hover { background-color: #0056b3; }
 
-    /* SIRF UDHAR CHUNNE PAR HI DIKHEGA */
+    /* SIRF UDHAR SELECTION PAR HI DIKHEGA */
     #personGroup { display: none; background: #eff6ff; padding: 12px; border-radius: 6px; border: 2px solid #3b82f6; }
     
-    /* PDF Printable Layout */
+    /* PDF Layout Styling */
     #pdfContent { background: white; padding: 20px; border: 1px solid #eee; display: none; }
     .summary-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     .summary-table th, .summary-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -35,7 +34,6 @@
 </head>
 <body>
 
-  <!-- Daily Entry Form Card -->
   <div class="card">
     <h2>Daily Entry Form</h2>
     <form id="trackerForm">
@@ -55,7 +53,6 @@
         </select>
       </div>
 
-      <!-- Person Name Field (Sirf Udhar me hi dikhega) -->
       <div class="form-group" id="personGroup">
         <label for="person_name" style="color: #1e40af;">Person Name (Kisko Udhar Diya / Kisse Mila):</label>
         <input type="text" id="person_name" placeholder="E.g. Rahul, Ramesh">
@@ -75,7 +72,6 @@
     </form>
   </div>
 
-  <!-- Monthly PDF Report Download Card -->
   <div class="card">
     <h3>Monthly PDF Report Download</h3>
     <div class="form-group">
@@ -85,7 +81,6 @@
     <button type="button" class="btn-pdf" onclick="generatePDF()">Download Monthly PDF Report</button>
   </div>
 
-  <!-- PDF Document Printable Layout -->
   <div id="pdfContent">
     <h2 style="text-align: center; margin-bottom: 2px;">Monthly Financial Report</h2>
     <p style="text-align: center; color: #555; margin-top: 0;" id="pdfMonthLabel"></p>
@@ -103,7 +98,6 @@
     <table class="summary-table">
       <thead>
         <tr>
-          <th>Cust ID</th>
           <th>Customer Name</th>
           <th>Total Udhar Given (₹)</th>
           <th>Total Received (₹)</th>
@@ -117,7 +111,7 @@
   <script src="app.js"></script>
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      // Default Date Set (Today)
+      // Automatic current date selection
       document.getElementById('date').valueAsDate = new Date();
       
       const now = new Date();
@@ -130,7 +124,7 @@
     const personGroup = document.getElementById('personGroup');
     const personInput = document.getElementById('person_name');
 
-    // Person Box Visibility Logic
+    // Person Input Display Toggle
     function updateFieldVisibility() {
       const selectedType = typeSelect.value;
       if (selectedType === 'debt' || selectedType === 'debt_repayment') {
@@ -145,7 +139,7 @@
 
     typeSelect.addEventListener('change', updateFieldVisibility);
 
-    // Save Record Handler
+    // Save Record Logic
     document.getElementById('trackerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -157,22 +151,23 @@
       const type = typeSelect.value;
       const amount = parseFloat(document.getElementById('amount').value);
       const description = document.getElementById('description').value;
+      let person_name = null;
       let customer_id = null;
 
       try {
         if (type === 'debt' || type === 'debt_repayment') {
-          const custName = personInput.value.trim();
-          if (!custName) return alert('Bande ka NAAM zaroor bharein!');
-          customer_id = await getOrCreateCustomer(custName);
+          person_name = personInput.value.trim();
+          if (!person_name) throw new Error('Bande ka NAAM zaroor bharein!');
+          customer_id = await getOrCreateCustomer(person_name);
         }
 
         const { error } = await supabaseClient
           .from('daily_records')
-          .insert([{ date, type, customer_id, amount, description }]);
+          .insert([{ date, type, customer_id, person_name, amount, description }]);
 
         if (error) throw error;
 
-        alert('Entry successful save ho gayi!');
+        alert('Entry successfully save ho gayi!');
         document.getElementById('amount').value = '';
         document.getElementById('description').value = '';
         personInput.value = '';
@@ -185,7 +180,7 @@
       }
     });
 
-    // PDF Report Generator Logic
+    // PDF Generation Handler
     async function generatePDF() {
       const monthVal = document.getElementById('reportMonth').value;
       if (!monthVal) return alert("Month select karein!");
@@ -194,70 +189,72 @@
       const startDate = `${year}-${month}-01`;
       const endDate = new Date(year, month, 0).toISOString().split('T')[0];
 
-      const { data, error } = await supabaseClient
-        .from('daily_records')
-        .select('*, customers(id, name)')
-        .gte('date', startDate)
-        .lte('date', endDate);
+      try {
+        // Fetch daily records for the selected month
+        const { data: records, error: recErr } = await supabaseClient
+          .from('daily_records')
+          .select('*')
+          .gte('date', startDate)
+          .lte('date', endDate);
 
-      if (error) return alert('Data fetch karne me dikkat hui: ' + error.message);
+        if (recErr) throw recErr;
 
-      let totalSales = 0, totalPurchase = 0, totalExpense = 0;
-      let customerLedger = {};
+        // Fetch overall customer ledger summary
+        const { data: ledger, error: ledErr } = await supabaseClient
+          .from('customer_ledger')
+          .select('*');
 
-      data.forEach(item => {
-        const amt = parseFloat(item.amount);
-        if (item.type === 'sell') totalSales += amt;
-        if (item.type === 'purchase') totalPurchase += amt;
-        if (item.type === 'expense') totalExpense += amt;
+        if (ledErr) throw ledErr;
 
-        if ((item.type === 'debt' || item.type === 'debt_repayment') && item.customers) {
-          const cId = item.customers.id;
-          const cName = item.customers.name;
+        let totalSales = 0, totalPurchase = 0, totalExpense = 0;
 
-          if (!customerLedger[cId]) {
-            customerLedger[cId] = { id: cId, name: cName, totalGiven: 0, totalReceived: 0 };
-          }
+        (records || []).forEach(item => {
+          const amt = parseFloat(item.amount);
+          if (item.type === 'sell') totalSales += amt;
+          if (item.type === 'purchase') totalPurchase += amt;
+          if (item.type === 'expense') totalExpense += amt;
+        });
 
-          if (item.type === 'debt') customerLedger[cId].totalGiven += amt;
-          if (item.type === 'debt_repayment') customerLedger[cId].totalReceived += amt;
-        }
-      });
+        document.getElementById('pdfMonthLabel').innerText = `Report Period: ${monthVal}`;
+        document.getElementById('pdfSales').innerText = totalSales.toFixed(2);
+        document.getElementById('pdfPurchase').innerText = totalPurchase.toFixed(2);
+        document.getElementById('pdfExpense').innerText = totalExpense.toFixed(2);
 
-      document.getElementById('pdfMonthLabel').innerText = `Report Period: ${monthVal}`;
-      document.getElementById('pdfSales').innerText = totalSales.toFixed(2);
-      document.getElementById('pdfPurchase').innerText = totalPurchase.toFixed(2);
-      document.getElementById('pdfExpense').innerText = totalExpense.toFixed(2);
+        const debtTbody = document.getElementById('pdfDebtRows');
+        debtTbody.innerHTML = '';
 
-      const debtTbody = document.getElementById('pdfDebtRows');
-      debtTbody.innerHTML = '';
+        (ledger || []).forEach(cust => {
+          const given = parseFloat(cust.total_udhar_diya || 0);
+          const received = parseFloat(cust.total_wapas_mila || 0);
+          const remaining = parseFloat(cust.net_baaki_amount || 0);
 
-      Object.values(customerLedger).forEach(cust => {
-        const netRemaining = cust.totalGiven - cust.totalReceived;
-        debtTbody.innerHTML += `
-          <tr>
-            <td>#${cust.id}</td>
-            <td>${cust.name}</td>
-            <td>₹ ${cust.totalGiven.toFixed(2)}</td>
-            <td>₹ ${cust.totalReceived.toFixed(2)}</td>
-            <td style="font-weight: bold; color: ${netRemaining > 0 ? '#dc2626' : '#16a34a'};">
-              ₹ ${netRemaining.toFixed(2)}
-            </td>
-          </tr>
-        `;
-      });
+          debtTbody.innerHTML += `
+            <tr>
+              <td>${cust.customer_name}</td>
+              <td>₹ ${given.toFixed(2)}</td>
+              <td>₹ ${received.toFixed(2)}</td>
+              <td style="font-weight: bold; color: ${remaining > 0 ? '#dc2626' : '#16a34a'};">
+                ₹ ${remaining.toFixed(2)}
+              </td>
+            </tr>
+          `;
+        });
 
-      const element = document.getElementById('pdfContent');
-      element.style.display = 'block';
+        const element = document.getElementById('pdfContent');
+        element.style.display = 'block';
 
-      html2pdf().set({
-        margin: 10,
-        filename: `Financial_Report_${monthVal}.pdf`,
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).from(element).save().then(() => {
-        element.style.display = 'none';
-      });
+        html2pdf().set({
+          margin: 10,
+          filename: `Financial_Report_${monthVal}.pdf`,
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(element).save().then(() => {
+          element.style.display = 'none';
+        });
+
+      } catch (err) {
+        alert('Report fetch karne me error: ' + err.message);
+      }
     }
   </script>
 </body>
