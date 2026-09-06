@@ -9,41 +9,45 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
-    body { font-family: Arial, sans-serif; max-width: 450px; margin: 50px auto; padding: 20px; background-color: #f4f6f9; }
-    .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    h2 { color: #333; margin-top: 0; text-align: center; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; font-weight: bold; }
-    input, button { width: 100%; padding: 10px; box-sizing: border-box; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
-    button { background-color: #28a745; color: white; border: none; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-    button:hover { background-color: #218838; }
-    .toggle-link { color: #007bff; text-align: center; cursor: pointer; text-decoration: underline; margin-top: 15px; display: block; }
+    body { font-family: Arial, sans-serif; max-width: 400px; margin: 80px auto; padding: 20px; background-color: #f4f6f9; }
+    .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h2 { color: #1e293b; margin-top: 0; text-align: center; font-size: 22px; }
+    p.subtitle { text-align: center; color: #64748b; font-size: 13px; margin-top: -10px; margin-bottom: 25px; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; margin-bottom: 6px; font-weight: bold; color: #334155; font-size: 14px; }
+    input { width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+    input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
+    button { width: 100%; padding: 12px; background-color: #2563eb; color: white; border: none; font-size: 15px; cursor: pointer; font-weight: bold; border-radius: 6px; margin-top: 10px; transition: background 0.2s; }
+    button:hover { background-color: #1d4ed8; }
+    #errorMessage { color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 10px; border-radius: 6px; font-size: 13px; display: none; margin-bottom: 15px; }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h2 id="authTitle">Login to Account</h2>
-    <form id="authForm">
+    <h2>Finance Tracker Login</h2>
+    <p class="subtitle">Apna Email aur Password se Login karein</p>
+
+    <div id="errorMessage"></div>
+
+    <form id="loginForm">
       <div class="form-group">
-        <label for="authEmail">Email Address:</label>
+        <label for="authEmail">Email Address</label>
         <input type="email" id="authEmail" placeholder="aapkaemail@gmail.com" required>
       </div>
 
       <div class="form-group">
-        <label for="authPassword">Password:</label>
-        <input type="password" id="authPassword" placeholder="Minimum 6 characters" required>
+        <label for="authPassword">Password</label>
+        <input type="password" id="authPassword" placeholder="••••••••" required>
       </div>
 
-      <button type="submit" id="authBtn">Login</button>
+      <button type="submit" id="loginBtn">Login Karein</button>
     </form>
-    
-    <span class="toggle-link" id="toggleAuth" onclick="toggleAuthMode()">New User? Create an account (Sign Up)</span>
   </div>
 
   <script src="app.js"></script>
   <script>
-    // Agar user pehle se logged in hai toh direct tracker page par bhej do
+    // Pehle se login ho toh direct app (index.html) pe bhej do
     window.addEventListener('DOMContentLoaded', async () => {
       const session = await getSession();
       if (session) {
@@ -51,49 +55,29 @@
       }
     });
 
-    let isSignUpMode = false;
-
-    function toggleAuthMode() {
-      isSignUpMode = !isSignUpMode;
-      const title = document.getElementById('authTitle');
-      const btn = document.getElementById('authBtn');
-      const toggle = document.getElementById('toggleAuth');
-
-      if (isSignUpMode) {
-        title.innerText = "Create New Account";
-        btn.innerText = "Sign Up";
-        toggle.innerText = "Already have an account? Login";
-      } else {
-        title.innerText = "Login to Account";
-        btn.innerText = "Login";
-        toggle.innerText = "New User? Create an account (Sign Up)";
-      }
-    }
-
-    document.getElementById('authForm').addEventListener('submit', async (e) => {
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('authEmail').value;
+      const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPassword').value;
-      const btn = document.getElementById('authBtn');
+      const btn = document.getElementById('loginBtn');
+      const errBox = document.getElementById('errorMessage');
 
+      errBox.style.display = 'none';
       btn.disabled = true;
-      btn.innerText = "Processing...";
+      btn.innerText = "Checking Credentials...";
 
       try {
-        if (isSignUpMode) {
-          const { data, error } = await supabaseClient.auth.signUp({ email, password });
-          if (error) throw error;
-          alert('Account created! Logging in...');
-        } else {
-          const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-        }
+        const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        
+        // Success! Go to main dashboard
         window.location.href = 'index.html';
       } catch (err) {
-        alert('Error: ' + err.message);
+        errBox.innerText = 'Login Failed: ' + (err.message || 'Incorrect email or password');
+        errBox.style.display = 'block';
       } finally {
         btn.disabled = false;
-        btn.innerText = isSignUpMode ? "Sign Up" : "Login";
+        btn.innerText = "Login Karein";
       }
     });
   </script>
