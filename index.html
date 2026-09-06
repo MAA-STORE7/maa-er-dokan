@@ -49,10 +49,13 @@
         </select>
       </div>
 
-      <!-- Person Name Field -->
+      <!-- Person Name Input with Auto-Suggest Dropdown -->
       <div class="form-group" id="personGroup">
-        <label for="person_name" style="color: #1e40af;">Person Name (Kisko Udhar Diya / Kisse Mila):</label>
-        <input type="text" id="person_name" placeholder="E.g. Rahul, Ramesh">
+        <label for="person_name" style="color: #1e40af;">Customer Name (Select or Type New):</label>
+        <input type="text" id="person_name" list="customerList" placeholder="Select customer ya naya naam likhein...">
+        <datalist id="customerList">
+          <!-- Customers dynamic load honge -->
+        </datalist>
       </div>
 
       <div class="form-group">
@@ -121,17 +124,37 @@
       document.getElementById('reportMonth').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       
       updateFieldVisibility();
+      loadCustomerDropdown();
     });
 
     const typeSelect = document.getElementById('type');
     const personGroup = document.getElementById('personGroup');
     const personInput = document.getElementById('person_name');
+    const customerList = document.getElementById('customerList');
 
-    function updateFieldVisibility() {
+    // Customer Dropdown Data Fetch Function
+    async function loadCustomerDropdown() {
+      try {
+        if (!supabaseClient) return;
+        const { data, error } = await supabaseClient.from('customers').select('name').order('name', { ascending: true });
+        if (error) throw error;
+
+        customerList.innerHTML = '';
+        (data || []).forEach(cust => {
+          customerList.innerHTML += `<option value="${cust.name}">`;
+        });
+      } catch (err) {
+        console.error("Customers list fetch karne me error:", err.message);
+      }
+    }
+
+    // Dropdown Show/Hide Logic
+    async function updateFieldVisibility() {
       const selectedType = typeSelect.value;
       if (selectedType === 'debt' || selectedType === 'debt_repayment') {
         personGroup.style.display = 'block';
         personInput.required = true;
+        await loadCustomerDropdown(); // Udhar select hote hi saare customers load honge
       } else {
         personGroup.style.display = 'none';
         personInput.required = false;
@@ -141,7 +164,7 @@
 
     typeSelect.addEventListener('change', updateFieldVisibility);
 
-    // Save Entry Handler (Separate Tables Insertion)
+    // Save Entry Handler
     document.getElementById('trackerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -155,13 +178,10 @@
       const description = document.getElementById('description').value;
 
       try {
-        if (!supabaseClient) {
-          throw new Error("Supabase Client load nahi hua hai!");
-        }
+        if (!supabaseClient) throw new Error("Supabase Client load nahi hua hai!");
 
         let error = null;
 
-        // Routing entry to separate tables
         if (type === 'sell') {
           ({ error } = await supabaseClient.from('sales').insert([{ date, amount, description }]));
         } else if (type === 'purchase') {
@@ -178,7 +198,7 @@
 
         if (error) throw error;
 
-        alert('Entry corresponding table me successful save ho gayi!');
+        alert('Entry successful save ho gayi!');
         document.getElementById('amount').value = '';
         document.getElementById('description').value = '';
         personInput.value = '';
@@ -191,7 +211,7 @@
       }
     });
 
-    // PDF Generator Handler (Combines Data from All Tables)
+    // PDF Generator Handler
     async function generatePDF() {
       const monthVal = document.getElementById('reportMonth').value;
       if (!monthVal) return alert("Month select karein!");
@@ -201,7 +221,6 @@
       const endDate = new Date(year, month, 0).toISOString().split('T')[0];
 
       try {
-        // Fetch from 3 Separate Tables & Customer Ledger View
         const [salesRes, purchaseRes, expenseRes, ledgerRes] = await Promise.all([
           supabaseClient.from('sales').select('amount').gte('date', startDate).lte('date', endDate),
           supabaseClient.from('purchases').select('amount').gte('date', startDate).lte('date', endDate),
