@@ -54,7 +54,7 @@
         <label for="person_name" style="color: #1e40af;">Customer Name (Select or Type New):</label>
         <input type="text" id="person_name" list="customerList" placeholder="Select customer ya naya naam likhein...">
         <datalist id="customerList">
-          <!-- ID aur Customer Name dynamic load honge -->
+          <!-- Customers dynamic load honge -->
         </datalist>
       </div>
 
@@ -100,7 +100,7 @@
     <table class="summary-table">
       <thead>
         <tr>
-          <th>S.No.</th>
+          <th>Serial No.</th>
           <th>Customer Name</th>
           <th>Total Udhar Given (₹)</th>
           <th>Total Received (₹)</th>
@@ -133,21 +133,16 @@
     const personInput = document.getElementById('person_name');
     const customerList = document.getElementById('customerList');
 
-    // Customer Dropdown Data Fetch Function (ID + Name)
+    // Customer Dropdown Data Fetch Function (Supabase ID / Serial No.)
     async function loadCustomerDropdown() {
       try {
         if (!supabaseClient) return;
-        const { data, error } = await supabaseClient
-          .from('customers')
-          .select('id, name')
-          .order('id', { ascending: true });
-
+        const { data, error } = await supabaseClient.from('customers').select('id, name').order('id', { ascending: true });
         if (error) throw error;
 
         customerList.innerHTML = '';
         (data || []).forEach(cust => {
-          // Input options par customer ki ID (#1, #2...) dikhayega
-          customerList.innerHTML += `<option value="${cust.name}">#${cust.id} - ${cust.name}</option>`;
+          customerList.innerHTML += `<option value="${cust.name}">S.No: #${cust.id} - ${cust.name}</option>`;
         });
       } catch (err) {
         console.error("Customers list fetch karne me error:", err.message);
@@ -160,7 +155,7 @@
       if (selectedType === 'debt' || selectedType === 'debt_repayment') {
         personGroup.style.display = 'block';
         personInput.required = true;
-        await loadCustomerDropdown(); 
+        await loadCustomerDropdown();
       } else {
         personGroup.style.display = 'none';
         personInput.required = false;
@@ -217,7 +212,7 @@
       }
     });
 
-    // PDF Generator Handler (with S.No. in Ledger)
+    // PDF Generator Handler (Uses customer_id from customer_ledger view)
     async function generatePDF() {
       const monthVal = document.getElementById('reportMonth').value;
       if (!monthVal) return alert("Month select karein!");
@@ -231,12 +226,13 @@
           supabaseClient.from('sales').select('amount').gte('date', startDate).lte('date', endDate),
           supabaseClient.from('purchases').select('amount').gte('date', startDate).lte('date', endDate),
           supabaseClient.from('expenses').select('amount').gte('date', startDate).lte('date', endDate),
-          supabaseClient.from('customer_ledger').select('*')
+          supabaseClient.from('customer_ledger').select('*').order('customer_id', { ascending: true })
         ]);
 
         if (salesRes.error) throw salesRes.error;
         if (purchaseRes.error) throw purchaseRes.error;
         if (expenseRes.error) throw expenseRes.error;
+        if (ledgerRes.error) throw ledgerRes.error;
 
         const totalSales = (salesRes.data || []).reduce((sum, item) => sum + parseFloat(item.amount), 0);
         const totalPurchase = (purchaseRes.data || []).reduce((sum, item) => sum + parseFloat(item.amount), 0);
@@ -250,14 +246,14 @@
         const debtTbody = document.getElementById('pdfDebtRows');
         debtTbody.innerHTML = '';
 
-        (ledgerRes.data || []).forEach((cust, index) => {
+        (ledgerRes.data || []).forEach(cust => {
           const given = parseFloat(cust.total_udhar_diya || 0);
           const received = parseFloat(cust.total_wapas_mila || 0);
           const remaining = parseFloat(cust.net_baaki_amount || 0);
 
           debtTbody.innerHTML += `
             <tr>
-              <td>${index + 1}</td>
+              <td>#${cust.customer_id}</td>
               <td>${cust.customer_name}</td>
               <td>₹ ${given.toFixed(2)}</td>
               <td>₹ ${received.toFixed(2)}</td>
