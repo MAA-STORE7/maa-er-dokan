@@ -49,12 +49,12 @@
         </select>
       </div>
 
-      <!-- Person Name Input with Auto-Suggest Dropdown -->
+      <!-- Single Input Box for Both Select (Old) & Type (New) -->
       <div class="form-group" id="personGroup">
-        <label for="person_name" style="color: #1e40af;">Customer Name (Select or Type New):</label>
-        <input type="text" id="person_name" list="customerList" placeholder="Select customer ya naya naam likhein...">
+        <label for="person_name" style="color: #1e40af;">Customer Name (Select Karein Ya Naya Likhein):</label>
+        <input type="text" id="person_name" list="customerList" placeholder="Click karke select karein ya naya naam type karein..." autocomplete="off">
         <datalist id="customerList">
-          <!-- Customers dynamic load honge -->
+          <!-- Options dynamic load honge -->
         </datalist>
       </div>
 
@@ -125,7 +125,6 @@
       document.getElementById('reportMonth').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       
       updateFieldVisibility();
-      loadCustomerDropdown();
     });
 
     const typeSelect = document.getElementById('type');
@@ -133,7 +132,7 @@
     const personInput = document.getElementById('person_name');
     const customerList = document.getElementById('customerList');
 
-    // Customer Dropdown Data Fetch Function (Supabase ID / Serial No.)
+    // Load Existing Customers List into Datalist
     async function loadCustomerDropdown() {
       try {
         if (!supabaseClient) return;
@@ -142,14 +141,15 @@
 
         customerList.innerHTML = '';
         (data || []).forEach(cust => {
-          customerList.innerHTML += `<option value="${cust.name}">S.No: #${cust.id} - ${cust.name}</option>`;
+          // List item me Customer ka Naam aur #Serial No. dikhega
+          customerList.innerHTML += `<option value="${cust.name}">#${cust.id} - ${cust.name}</option>`;
         });
       } catch (err) {
         console.error("Customers list fetch karne me error:", err.message);
       }
     }
 
-    // Dropdown Show/Hide Logic
+    // Toggle Field Visibility
     async function updateFieldVisibility() {
       const selectedType = typeSelect.value;
       if (selectedType === 'debt' || selectedType === 'debt_repayment') {
@@ -165,7 +165,7 @@
 
     typeSelect.addEventListener('change', updateFieldVisibility);
 
-    // Save Entry Handler
+    // Form Submit Handler
     document.getElementById('trackerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -191,8 +191,10 @@
           ({ error } = await supabaseClient.from('expenses').insert([{ date, amount, description }]));
         } else if (type === 'debt' || type === 'debt_repayment') {
           const person_name = personInput.value.trim();
-          if (!person_name) throw new Error('Bande ka NAAM zaroor bharein!');
+
+          if (!person_name) throw new Error('Customer ka naam chuno ya type karo!');
           
+          // getOrCreateCustomer app.js ka function purana/naya dono automatic handle kar leta hai
           const customer_id = await getOrCreateCustomer(person_name);
           ({ error } = await supabaseClient.from('daily_records').insert([{ date, type, customer_id, person_name, amount, description }]));
         }
@@ -203,6 +205,7 @@
         document.getElementById('amount').value = '';
         document.getElementById('description').value = '';
         personInput.value = '';
+        await loadCustomerDropdown(); // List Update kar do
         updateFieldVisibility();
       } catch (err) {
         alert('Error: ' + err.message);
@@ -212,7 +215,7 @@
       }
     });
 
-    // PDF Generator Handler (Uses customer_id from customer_ledger view)
+    // Generate Monthly PDF
     async function generatePDF() {
       const monthVal = document.getElementById('reportMonth').value;
       if (!monthVal) return alert("Month select karein!");
