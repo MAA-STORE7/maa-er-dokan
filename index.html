@@ -1,94 +1,343 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daily Finance & Udhar Tracker</title>
+  <title>Maa Store - Digital Ledger</title>
+
+  <!-- Google Font: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body { font-family: Arial, sans-serif; max-width: 650px; margin: 20px auto; padding: 20px; background-color: #f4f6f9; }
-    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    h2, h3 { color: #333; margin-top: 0; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; font-weight: bold; }
-    input, select, textarea, button { width: 100%; padding: 10px; box-sizing: border-box; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
-    
-    button { background-color: #28a745; color: white; border: none; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-    button:hover { background-color: #218838; }
-    
-    .btn-pdf { background-color: #007bff; }
-    .btn-pdf:hover { background-color: #0056b3; }
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
 
-    #personGroup { display: none; background: #eff6ff; padding: 12px; border-radius: 6px; border: 2px solid #3b82f6; }
+    body { 
+      max-width: 650px; 
+      margin: 0 auto; 
+      padding: 20px; 
+      background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+      min-height: 100vh;
+      animation: pageFadeIn 0.8s ease-out;
+    }
+
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Header Section */
+    .header-bar { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 25px;
+      background: white;
+      padding: 14px 22px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 1000;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    }
+
+    .header-bar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.08);
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-logo { 
+      height: 52px; 
+      width: auto; 
+      max-width: 80px;
+      object-fit: contain;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .header-logo:hover {
+      transform: scale(1.08) rotate(-3deg);
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 800;
+      background: linear-gradient(45deg, #4f46e5, #9333ea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: #64748b;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+    
+    /* Navigation Container & Fixed Top Dropdown */
+    .nav-container { 
+      position: relative; 
+    }
+
+    .menu-btn { 
+      font-size: 20px; 
+      background: #f1f5f9; 
+      border: none; 
+      cursor: pointer; 
+      color: #334155; 
+      padding: 10px 14px; 
+      border-radius: 12px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      width: auto;
+      margin-top: 0;
+    }
+
+    .menu-btn:hover { 
+      background: #e2e8f0;
+      transform: scale(1.05);
+    }
+
+    .menu-btn:active {
+      transform: scale(0.95);
+    }
+
+    .nav-dropdown { 
+      display: none; 
+      position: absolute; 
+      right: 0; 
+      top: 50px; 
+      background: white; 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+      border-radius: 16px; 
+      padding: 20px; 
+      width: 300px; 
+      z-index: 9999; 
+      border: 1px solid #e2e8f0;
+      transform-origin: top right;
+    }
+
+    .nav-dropdown.active { 
+      display: block; 
+      animation: dropdownPop 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards; 
+    }
+
+    @keyframes dropdownPop {
+      0% { opacity: 0; transform: scale(0.9) translateY(-10px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Card Styling */
+    .card { 
+      background: rgba(255, 255, 255, 0.95); 
+      padding: 28px; 
+      border-radius: 20px; 
+      box-shadow: 0 15px 35px rgba(0,0,0,0.06); 
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      animation: cardSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes cardSlideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:hover {
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    }
+
+    h2 { 
+      color: #1e1b4b; 
+      margin-top: 0; 
+      font-size: 20px; 
+      font-weight: 700;
+      border-bottom: 2px solid #e0e7ff; 
+      padding-bottom: 12px; 
+    }
+    
+    .form-group { margin-bottom: 18px; }
+    label { display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13px; }
+    
+    input, select, textarea { 
+      width: 100%; 
+      padding: 12px 14px; 
+      margin-top: 4px; 
+      border-radius: 12px; 
+      font-size: 14px;
+      outline: none;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1.5px solid #cbd5e1;
+    }
+
+    #date { background-color: #f0fdf4; border-color: #86efac; }
+    #type { font-weight: 600; cursor: pointer; }
+    #person_name { background-color: #f0f9ff; border-color: #bae6fd; }
+    #amount { background-color: #fff1f2; border-color: #fecdd3; font-size: 20px; font-weight: 700; color: #be123c; }
+    #description { background-color: #faf5ff; border-color: #e9d5ff; }
+
+    input:focus, select:focus, textarea:focus {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.12);
+      border-color: #6366f1;
+    }
+    
+    button { 
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(45deg, #10b981, #059669); 
+      color: white; 
+      border: none; 
+      font-size: 15px; 
+      cursor: pointer; 
+      font-weight: 600; 
+      margin-top: 10px; 
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    button:hover { 
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 8px 22px rgba(16, 185, 129, 0.45);
+    }
+
+    button:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+    
+    .btn-pdf { 
+      background: linear-gradient(45deg, #2563eb, #1d4ed8); 
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+    .btn-pdf:hover { 
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.45);
+    }
+
+    #personGroup { 
+      display: none; 
+      background: #e0f2fe; 
+      padding: 16px; 
+      border-radius: 14px; 
+      border: 2px solid #38bdf8;
+      animation: expandGroup 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes expandGroup {
+      from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
     
     #pdfContent { background: white; padding: 20px; border: 1px solid #eee; display: none; }
     .summary-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    .summary-table th, .summary-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    .summary-table th { background-color: #f2f2f2; }
+    .summary-table th, .summary-table td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 13px; }
+    .summary-table th { background-color: #f1f5f9; }
   </style>
 </head>
 <body>
 
+  <!-- Top Header -->
+  <div class="header-bar">
+    <div class="brand-container">
+      <img src="logo.png" alt="Maa Store Logo" class="header-logo" id="storeLogo">
+      <div>
+        <h1 class="brand-title">Maa Store</h1>
+        <div class="brand-subtitle">Smart Digital Ledger</div>
+      </div>
+    </div>
+    
+    <!-- 3-Line Menu Dropdown -->
+    <div class="nav-container">
+      <button class="menu-btn" onclick="toggleNav()">&#9776;</button>
+      <div class="nav-dropdown" id="navDropdown">
+        <h4 style="margin-top:0; color:#1e1b4b; font-weight:600;">Download Reports</h4>
+        
+        <div class="form-group">
+          <label for="reportType">Report Mode</label>
+          <select id="reportType" onchange="toggleReportInput()">
+            <option value="monthly">Monthly Report</option>
+            <option value="yearly">Full Year Report</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="monthInputGroup">
+          <label for="reportMonth">Select Month & Year</label>
+          <input type="month" id="reportMonth">
+        </div>
+
+        <div class="form-group" id="yearInputGroup" style="display: none;">
+          <label for="reportYear">Select Year</label>
+          <input type="number" id="reportYear" min="2020" max="2100" placeholder="e.g. 2026">
+        </div>
+
+        <button type="button" class="btn-pdf" onclick="generatePDF()">📄 Download Statement</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Daily Entry Form -->
   <div class="card">
-    <h2>Daily Entry Form</h2>
+    <h2>Daily Transaction Entry</h2>
     <form id="trackerForm">
       <div class="form-group">
-        <label for="date">Tarikh (Date):</label>
+        <label for="date">Entry Date</label>
         <input type="date" id="date" required>
       </div>
 
       <div class="form-group">
-        <label for="type">Entry Type:</label>
-        <select id="type" required>
-          <option value="sell">Sell (Bikri)</option>
-          <option value="purchase">Purchase (Kharidari)</option>
-          <option value="expense">Expense (Kharcha)</option>
-          <option value="debt">Debt Given (Udhar Diya)</option>
-          <option value="debt_repayment">Debt Received (Udhar Wapas Mila)</option>
+        <label for="type">Transaction Type</label>
+        <select id="type" required onchange="applyTypeColor()">
+          <option value="sell" style="background:#dcfce7; color:#166534;">🛒 Total Sales</option>
+          <option value="purchase" style="background:#ffedd5; color:#9a3412;">📦 Purchase Item</option>
+          <option value="expense" style="background:#fee2e2; color:#991b1b;">💸 Expense</option>
+          <option value="debt" style="background:#e0e7ff; color:#3730a3;">🤝 Credit Given (Udhar)</option>
+          <option value="debt_repayment" style="background:#f3e8ff; color:#6b21a8;">💰 Debt Received Back</option>
         </select>
       </div>
 
-      <!-- Single Input Box for Both Select (Old) & Type (New) -->
       <div class="form-group" id="personGroup">
-        <label for="person_name" style="color: #1e40af;">Customer Name (Select Karein Ya Naya Likhein):</label>
-        <input type="text" id="person_name" list="customerList" placeholder="Click karke select karein ya naya naam type karein..." autocomplete="off">
-        <datalist id="customerList">
-          <!-- Options dynamic load honge -->
-        </datalist>
+        <label for="person_name" style="color: #0369a1;">Customer Name (Select or Type New)</label>
+        <input type="text" id="person_name" list="customerList" placeholder="Search or enter customer name..." autocomplete="off">
+        <datalist id="customerList"></datalist>
       </div>
 
       <div class="form-group">
-        <label for="amount">Amount (₹):</label>
-        <input type="number" step="0.01" id="amount" placeholder="Kitna rupya" required>
+        <label for="amount">Amount (₹)</label>
+        <input type="number" step="0.01" id="amount" placeholder="₹ 0.00" required>
       </div>
 
       <div class="form-group">
-        <label for="description">Note / Detail:</label>
-        <textarea id="description" rows="2" placeholder="Koi detail (Optional)"></textarea>
+        <label for="description">Note / Particulars (Optional)</label>
+        <textarea id="description" rows="2" placeholder="Enter details..."></textarea>
       </div>
 
-      <button type="submit" id="saveBtn">Save Entry</button>
+      <button type="submit" id="saveBtn">✨ Save Record</button>
     </form>
-  </div>
-
-  <!-- Monthly PDF Report Section -->
-  <div class="card">
-    <h3>Monthly PDF Report Download</h3>
-    <div class="form-group">
-      <label for="reportMonth">Select Month & Year:</label>
-      <input type="month" id="reportMonth">
-    </div>
-    <button type="button" class="btn-pdf" onclick="generatePDF()">Download Monthly PDF Report</button>
   </div>
 
   <!-- PDF Layout Structure -->
   <div id="pdfContent">
-    <h2 style="text-align: center; margin-bottom: 2px;">Monthly Financial Report</h2>
+    <h2 style="text-align: center; margin-bottom: 2px;">Maa Store - Financial Statement</h2>
     <p style="text-align: center; color: #555; margin-top: 0;" id="pdfMonthLabel"></p>
     <hr>
     
-    <h3>Monthly Summary</h3>
+    <h3>Financial Summary</h3>
     <table class="summary-table">
       <tr><th>Category</th><th>Total Amount (₹)</th></tr>
       <tr><td>Total Sales</td><td id="pdfSales">0.00</td></tr>
@@ -96,15 +345,15 @@
       <tr><td>Total Expenses</td><td id="pdfExpense">0.00</td></tr>
     </table>
 
-    <h3 style="margin-top: 25px;">Customer Udhar Ledger (Net Outstanding)</h3>
+    <h3 style="margin-top: 25px;">Customer Credit Balance</h3>
     <table class="summary-table">
       <thead>
         <tr>
-          <th>Serial No.</th>
+          <th>S.No</th>
           <th>Customer Name</th>
-          <th>Total Udhar Given (₹)</th>
+          <th>Total Given (₹)</th>
           <th>Total Received (₹)</th>
-          <th>Net Remaining (₹)</th>
+          <th>Net Balance (₹)</th>
         </tr>
       </thead>
       <tbody id="pdfDebtRows"></tbody>
@@ -123,8 +372,10 @@
       
       const now = new Date();
       document.getElementById('reportMonth').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      document.getElementById('reportYear').value = now.getFullYear();
       
       updateFieldVisibility();
+      applyTypeColor();
     });
 
     const typeSelect = document.getElementById('type');
@@ -132,7 +383,37 @@
     const personInput = document.getElementById('person_name');
     const customerList = document.getElementById('customerList');
 
-    // Load Existing Customers List into Datalist
+    function toggleNav() {
+      document.getElementById('navDropdown').classList.toggle('active');
+    }
+
+    function toggleReportInput() {
+      const type = document.getElementById('reportType').value;
+      if (type === 'monthly') {
+        document.getElementById('monthInputGroup').style.display = 'block';
+        document.getElementById('yearInputGroup').style.display = 'none';
+      } else {
+        document.getElementById('monthInputGroup').style.display = 'none';
+        document.getElementById('yearInputGroup').style.display = 'block';
+      }
+    }
+
+    function applyTypeColor() {
+      const colors = {
+        sell: { bg: '#dcfce7', border: '#86efac', text: '#166534' },
+        purchase: { bg: '#ffedd5', border: '#fdba74', text: '#9a3412' },
+        expense: { bg: '#fee2e2', border: '#fca5a5', text: '#991b1b' },
+        debt: { bg: '#e0e7ff', border: '#a5b4fc', text: '#3730a3' },
+        debt_repayment: { bg: '#f3e8ff', border: '#d8b4fe', text: '#6b21a8' }
+      };
+      const selected = colors[typeSelect.value];
+      if (selected) {
+        typeSelect.style.backgroundColor = selected.bg;
+        typeSelect.style.borderColor = selected.border;
+        typeSelect.style.color = selected.text;
+      }
+    }
+
     async function loadCustomerDropdown() {
       try {
         if (!supabaseClient) return;
@@ -141,15 +422,13 @@
 
         customerList.innerHTML = '';
         (data || []).forEach(cust => {
-          // List item me Customer ka Naam aur #Serial No. dikhega
           customerList.innerHTML += `<option value="${cust.name}">#${cust.id} - ${cust.name}</option>`;
         });
       } catch (err) {
-        console.error("Customers list fetch karne me error:", err.message);
+        console.error("Error fetching customer list:", err.message);
       }
     }
 
-    // Toggle Field Visibility
     async function updateFieldVisibility() {
       const selectedType = typeSelect.value;
       if (selectedType === 'debt' || selectedType === 'debt_repayment') {
@@ -165,13 +444,12 @@
 
     typeSelect.addEventListener('change', updateFieldVisibility);
 
-    // Form Submit Handler
     document.getElementById('trackerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const saveBtn = document.getElementById('saveBtn');
       saveBtn.disabled = true;
-      saveBtn.innerText = "Saving...";
+      saveBtn.innerText = "⏳ Saving...";
 
       const date = document.getElementById('date').value;
       const type = typeSelect.value;
@@ -179,7 +457,7 @@
       const description = document.getElementById('description').value;
 
       try {
-        if (!supabaseClient) throw new Error("Supabase Client load nahi hua hai!");
+        if (!supabaseClient) throw new Error("Supabase Client is not loaded!");
 
         let error = null;
 
@@ -192,37 +470,51 @@
         } else if (type === 'debt' || type === 'debt_repayment') {
           const person_name = personInput.value.trim();
 
-          if (!person_name) throw new Error('Customer ka naam chuno ya type karo!');
+          if (!person_name) throw new Error('Please select or type a customer name!');
           
-          // getOrCreateCustomer app.js ka function purana/naya dono automatic handle kar leta hai
           const customer_id = await getOrCreateCustomer(person_name);
           ({ error } = await supabaseClient.from('daily_records').insert([{ date, type, customer_id, person_name, amount, description }]));
         }
 
         if (error) throw error;
 
-        alert('Entry successful save ho gayi!');
+        alert('✅ Record saved successfully!');
         document.getElementById('amount').value = '';
         document.getElementById('description').value = '';
         personInput.value = '';
-        await loadCustomerDropdown(); // List Update kar do
+        await loadCustomerDropdown();
         updateFieldVisibility();
       } catch (err) {
         alert('Error: ' + err.message);
       } finally {
         saveBtn.disabled = false;
-        saveBtn.innerText = "Save Entry";
+        saveBtn.innerText = "✨ Save Record";
       }
     });
 
-    // Generate Monthly PDF
     async function generatePDF() {
-      const monthVal = document.getElementById('reportMonth').value;
-      if (!monthVal) return alert("Month select karein!");
+      const mode = document.getElementById('reportType').value;
+      let startDate = '';
+      let endDate = '';
+      let labelText = '';
+      let fileName = '';
 
-      const [year, month] = monthVal.split('-');
-      const startDate = `${year}-${month}-01`;
-      const endDate = new Date(year, month, 0).toISOString().split('T')[0];
+      if (mode === 'monthly') {
+        const monthVal = document.getElementById('reportMonth').value;
+        if (!monthVal) return alert("Please select month & year!");
+        const [year, month] = monthVal.split('-');
+        startDate = `${year}-${month}-01`;
+        endDate = new Date(year, month, 0).toISOString().split('T')[0];
+        labelText = `Period: ${monthVal}`;
+        fileName = `MaaStore_Monthly_Report_${monthVal}.pdf`;
+      } else {
+        const yearVal = document.getElementById('reportYear').value;
+        if (!yearVal) return alert("Please select a year!");
+        startDate = `${yearVal}-01-01`;
+        endDate = `${yearVal}-12-31`;
+        labelText = `Period: Full Year ${yearVal}`;
+        fileName = `MaaStore_Yearly_Report_${yearVal}.pdf`;
+      }
 
       try {
         const [salesRes, purchaseRes, expenseRes, ledgerRes] = await Promise.all([
@@ -241,7 +533,7 @@
         const totalPurchase = (purchaseRes.data || []).reduce((sum, item) => sum + parseFloat(item.amount), 0);
         const totalExpense = (expenseRes.data || []).reduce((sum, item) => sum + parseFloat(item.amount), 0);
 
-        document.getElementById('pdfMonthLabel').innerText = `Report Period: ${monthVal}`;
+        document.getElementById('pdfMonthLabel').innerText = labelText;
         document.getElementById('pdfSales').innerText = totalSales.toFixed(2);
         document.getElementById('pdfPurchase').innerText = totalPurchase.toFixed(2);
         document.getElementById('pdfExpense').innerText = totalExpense.toFixed(2);
@@ -272,15 +564,16 @@
 
         html2pdf().set({
           margin: 10,
-          filename: `Financial_Report_${monthVal}.pdf`,
+          filename: fileName,
           html2canvas: { scale: 2 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(element).save().then(() => {
           element.style.display = 'none';
+          document.getElementById('navDropdown').classList.remove('active');
         });
 
       } catch (err) {
-        alert('Report fetch karne me error: ' + err.message);
+        alert('Error generating report: ' + err.message);
       }
     }
   </script>
