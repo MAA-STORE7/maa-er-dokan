@@ -42,12 +42,6 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.05);
       position: relative;
       z-index: 1000;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-    }
-
-    .header-bar:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 30px rgba(0,0,0,0.08);
     }
 
     .brand-container {
@@ -62,11 +56,6 @@
       max-width: 80px;
       object-fit: contain;
       display: block;
-      transition: transform 0.4s ease;
-    }
-
-    .header-logo:hover {
-      transform: scale(1.08) rotate(-3deg);
     }
 
     .brand-title {
@@ -100,18 +89,8 @@
       color: #334155; 
       padding: 10px 14px; 
       border-radius: 12px;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       width: auto;
       margin-top: 0;
-    }
-
-    .menu-btn:hover { 
-      background: #e2e8f0;
-      transform: scale(1.05);
-    }
-
-    .menu-btn:active {
-      transform: scale(0.95);
     }
 
     .nav-dropdown { 
@@ -126,53 +105,33 @@
       width: 300px; 
       z-index: 9999; 
       border: 1px solid #e2e8f0;
-      transform-origin: top right;
     }
 
     .nav-dropdown.active { 
       display: block; 
-      animation: dropdownPop 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards; 
-    }
-
-    @keyframes dropdownPop {
-      0% { opacity: 0; transform: scale(0.9) translateY(-10px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     /* Card Styling */
     .card { 
       background: rgba(255, 255, 255, 0.95); 
-      padding: 28px; 
+      padding: 24px; 
       border-radius: 20px; 
       box-shadow: 0 15px 35px rgba(0,0,0,0.06); 
       margin-bottom: 20px;
       border: 1px solid rgba(255, 255, 255, 0.6);
       backdrop-filter: blur(10px);
-      transition: box-shadow 0.3s ease, transform 0.3s ease;
-      animation: cardSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      z-index: 1;
-    }
-
-    @keyframes cardSlideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card:hover {
-      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
     }
 
     h2 { 
       color: #1e1b4b; 
       margin-top: 0; 
-      font-size: 20px; 
+      font-size: 18px; 
       font-weight: 700;
       border-bottom: 2px solid #e0e7ff; 
-      padding-bottom: 12px; 
+      padding-bottom: 10px; 
     }
     
-    .form-group { margin-bottom: 18px; }
+    .form-group { margin-bottom: 16px; }
     label { display: block; margin-bottom: 6px; font-weight: 600; color: #334155; font-size: 13px; }
     
     input, select, textarea { 
@@ -182,22 +141,15 @@
       border-radius: 12px; 
       font-size: 14px;
       outline: none;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       border: 1.5px solid #cbd5e1;
     }
 
     #date { background-color: #f0fdf4; border-color: #86efac; }
     #type { font-weight: 600; cursor: pointer; }
-    #person_name { background-color: #f0f9ff; border-color: #bae6fd; }
+    #person_name { background-color: #f0f9ff; border-color: #bae6fd; cursor: pointer; }
     #amount { background-color: #fff1f2; border-color: #fecdd3; font-size: 20px; font-weight: 700; color: #be123c; }
     #description { background-color: #faf5ff; border-color: #e9d5ff; }
 
-    input:focus, select:focus, textarea:focus {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(79, 70, 229, 0.12);
-      border-color: #6366f1;
-    }
-    
     button { 
       width: 100%;
       padding: 14px;
@@ -210,24 +162,11 @@
       margin-top: 10px; 
       border-radius: 12px;
       box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    button:hover { 
-      transform: translateY(-3px) scale(1.01);
-      box-shadow: 0 8px 22px rgba(16, 185, 129, 0.45);
-    }
-
-    button:active {
-      transform: translateY(-1px) scale(0.98);
     }
     
     .btn-pdf { 
       background: linear-gradient(45deg, #2563eb, #1d4ed8); 
       box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-    }
-    .btn-pdf:hover { 
-      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.45);
     }
 
     #personGroup { 
@@ -236,15 +175,17 @@
       padding: 16px; 
       border-radius: 14px; 
       border: 2px solid #38bdf8;
-      animation: expandGroup 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    @keyframes expandGroup {
-      from { opacity: 0; transform: translateY(-8px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+    .balance-info {
+      font-size: 12px;
+      margin-top: 6px;
+      font-weight: 600;
+      color: #0369a1;
+      display: none;
     }
 
-    /* PROFESSIONAL PDF STYLING */
+    /* PDF STYLING */
     #pdfContent { 
       background: #ffffff; 
       padding: 30px; 
@@ -267,7 +208,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .pdf-brand h1 {
@@ -275,14 +216,12 @@
       font-weight: 800;
       color: #1e1b4b;
       margin: 0;
-      letter-spacing: -0.5px;
     }
 
     .pdf-brand p {
       font-size: 12px;
       color: #64748b;
       margin-top: 2px;
-      font-weight: 500;
     }
 
     .pdf-badge {
@@ -293,7 +232,6 @@
       font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .pdf-meta-box {
@@ -304,7 +242,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .pdf-meta-item label {
@@ -312,9 +250,6 @@
       text-transform: uppercase;
       color: #64748b;
       font-weight: 700;
-      letter-spacing: 0.5px;
-      display: block;
-      margin-bottom: 2px;
     }
 
     .pdf-meta-item span {
@@ -323,108 +258,72 @@
       color: #0f172a;
     }
 
-    .pdf-section-title {
-      font-size: 15px;
-      font-weight: 700;
-      color: #1e293b;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
     .pdf-kpi-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 25px;
+      gap: 12px;
+      margin-bottom: 24px;
     }
 
     .pdf-kpi-card {
-      border-radius: 8px;
-      padding: 10px 12px;
+      border-radius: 12px;
+      padding: 14px;
       border: 1px solid #e2e8f0;
     }
 
-    /* Summary Cards - Original Theme Colors */
-    .pdf-kpi-card.sales { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
-    .pdf-kpi-card.purchase { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
-    .pdf-kpi-card.expense { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
-    .pdf-kpi-card.debt { background: #e0e7ff; border-color: #c7d2fe; color: #3730a3; }
-    .pdf-kpi-card.recovered { background: #f3e8ff; border-color: #e9d5ff; color: #6b21a8; }
+    .pdf-kpi-card.sales { background: #dcfce7; border-color: #86efac; color: #166534; }
+    .pdf-kpi-card.purchase { background: #ffedd5; border-color: #fdba74; color: #9a3412; }
+    .pdf-kpi-card.expense { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+    .pdf-kpi-card.net-profit { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; grid-column: span 3; }
 
-    .pdf-kpi-card span { font-size: 10px; font-weight: 600; display: block; opacity: 0.85; }
-    .pdf-kpi-card h3 { font-size: 16px; font-weight: 800; margin-top: 2px; margin-bottom: 0; }
+    .pdf-kpi-card span { font-size: 10px; font-weight: 700; display: block; opacity: 0.9; }
+    .pdf-kpi-card h3 { font-size: 16px; font-weight: 800; margin-top: 4px; margin-bottom: 0; }
+
+    /* PDF Udhar Table Section */
+    .pdf-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e1b4b;
+      margin-bottom: 10px;
+      margin-top: 20px;
+      border-bottom: 1.5px solid #cbd5e1;
+      padding-bottom: 4px;
+    }
 
     .pdf-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 30px;
-      border-radius: 8px;
-      overflow: hidden;
+      margin-bottom: 16px;
     }
 
     .pdf-table th {
-      background-color: #0f172a;
-      color: #ffffff;
-      padding: 10px 14px;
+      background: #f1f5f9;
+      color: #475569;
       font-size: 11px;
-      text-transform: uppercase;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      font-weight: 700;
       text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid #cbd5e1;
     }
 
     .pdf-table td {
-      padding: 10px 14px;
       font-size: 12px;
-      border-bottom: 1px solid #f1f5f9;
+      padding: 8px 10px;
+      border-bottom: 1px solid #e2e8f0;
       color: #334155;
     }
 
-    .pdf-table tr:nth-child(even) {
-      background-color: #f8fafc;
-    }
-
-    /* Specific Amount Colors for Detail Section */
-    .amount-debt-given {
-      color: #dc2626 !important; /* Red */
-      font-weight: 700;
-    }
-
-    .amount-debt-received {
-      color: #16a34a !important; /* Green */
-      font-weight: 700;
-    }
-
-    .pdf-footer {
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px dashed #cbd5e1;
+    .pdf-total-box {
+      background: #fef2f2;
+      border: 1.5px dashed #fca5a5;
+      padding: 12px 16px;
+      border-radius: 10px;
       display: flex;
       justify-content: space-between;
-      align-items: flex-end;
-    }
-
-    .pdf-footer-note {
-      font-size: 10px;
-      color: #94a3b8;
-    }
-
-    .pdf-signature {
-      text-align: center;
-      width: 180px;
-    }
-
-    .pdf-signature-line {
-      border-bottom: 1px solid #0f172a;
-      margin-bottom: 6px;
-    }
-
-    .pdf-signature label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #475569;
+      align-items: center;
+      color: #991b1b;
+      font-weight: 700;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -433,14 +332,14 @@
   <!-- Top Header -->
   <div class="header-bar">
     <div class="brand-container">
-      <img src="https://raw.githubusercontent.com/MAA-STORE7/maa-er-dokan/main/Gemini_Generated_Image_c1u4jjc1u4jjc1u4.png" alt="Maa Store Logo" class="header-logo" id="storeLogo">
+      <img src="https://raw.githubusercontent.com/MAA-STORE7/maa-er-dokan/main/Gemini_Generated_Image_c1u4jjc1u4jjc1u4.png" alt="Maa Store Logo" class="header-logo">
       <div>
         <h1 class="brand-title">Maa Store</h1>
         <div class="brand-subtitle">Smart Digital Ledger</div>
       </div>
     </div>
     
-    <!-- 3-Line Menu Dropdown -->
+    <!-- Menu Dropdown -->
     <div class="nav-container">
       <button class="menu-btn" onclick="toggleNav()">&#9776;</button>
       <div class="nav-dropdown" id="navDropdown">
@@ -449,7 +348,7 @@
         <div class="form-group">
           <label for="reportType">Report Mode</label>
           <select id="reportType" onchange="toggleReportInput()">
-            <option value="daily">Daily Report (Ek Din Ka)</option>
+            <option value="daily">Daily Report</option>
             <option value="monthly">Monthly Report</option>
             <option value="yearly">Full Year Report</option>
           </select>
@@ -495,10 +394,12 @@
         </select>
       </div>
 
+      <!-- Customer Dropdown Input -->
       <div class="form-group" id="personGroup">
-        <label for="person_name" style="color: #0369a1;">Customer Name (Select or Type New)</label>
-        <input type="text" id="person_name" list="customerList" placeholder="Search or enter customer name..." autocomplete="off">
+        <label for="person_name" style="color: #0369a1;">Select Customer (Dropdown / Type Name)</label>
+        <input type="text" id="person_name" list="customerList" placeholder="🔍 Click or type customer name..." autocomplete="off" oninput="showSelectedCustomerBalance()" onclick="this.value=''">
         <datalist id="customerList"></datalist>
+        <div class="balance-info" id="balanceInfo"></div>
       </div>
 
       <div class="form-group">
@@ -515,14 +416,13 @@
     </form>
   </div>
 
-  <!-- HIGH-END PDF LAYOUT -->
+  <!-- PDF CONTENT -->
   <div id="pdfContent">
     <div class="pdf-header-bar"></div>
-
     <div class="pdf-top">
       <div class="pdf-brand">
         <h1>Maa Store</h1>
-        <p>Enterprise Business Statement & Financial Ledger</p>
+        <p>Financial Statement & Udhar Summary</p>
       </div>
       <div class="pdf-badge">Official Report</div>
     </div>
@@ -530,63 +430,58 @@
     <div class="pdf-meta-box">
       <div class="pdf-meta-item">
         <label>Statement Period</label>
-        <span id="pdfMetaPeriod">Date: 07 Sep 2026</span>
+        <span id="pdfMetaPeriod">Date: --</span>
       </div>
       <div class="pdf-meta-item">
         <label>Generated On</label>
-        <span id="pdfMetaDate">07 Sep 2026</span>
+        <span id="pdfMetaDate">--</span>
       </div>
       <div class="pdf-meta-item">
         <label>Document Ref</label>
-        <span id="pdfMetaRef">MS-984321</span>
+        <span id="pdfMetaRef">MS-000000</span>
       </div>
     </div>
 
-    <div class="pdf-section-title">📊 Financial Summary</div>
+    <!-- Main KPIs -->
     <div class="pdf-kpi-grid">
       <div class="pdf-kpi-card sales">
         <span>TOTAL SALES</span>
-        <h3 id="pdfSales">₹ 0.00</h3>
+        <h3 id="pdfTotalSales">₹ 0.00</h3>
       </div>
       <div class="pdf-kpi-card purchase">
-        <span>PURCHASES</span>
-        <h3 id="pdfPurchase">₹ 0.00</h3>
+        <span>TOTAL PURCHASES</span>
+        <h3 id="pdfTotalPurchases">₹ 0.00</h3>
       </div>
       <div class="pdf-kpi-card expense">
-        <span>EXPENSES</span>
-        <h3 id="pdfExpense">₹ 0.00</h3>
+        <span>TOTAL EXPENSES</span>
+        <h3 id="pdfTotalExpenses">₹ 0.00</h3>
       </div>
-      <div class="pdf-kpi-card debt">
-        <span>UDHAR DIYA</span>
-        <h3 id="pdfDebtGiven">₹ 0.00</h3>
-      </div>
-      <div class="pdf-kpi-card recovered">
-        <span>UDHAR WAPAS MILA</span>
-        <h3 id="pdfDebtReceived">₹ 0.00</h3>
+      <div class="pdf-kpi-card net-profit">
+        <span>NET PROFIT / CASH BALANCE (Sales - Purchase - Expense)</span>
+        <h3 id="pdfNetProfit">₹ 0.00</h3>
       </div>
     </div>
 
-    <div class="pdf-section-title">📋 Detailed Transactions</div>
+    <!-- Udhar Details Table -->
+    <div class="pdf-section-title">📋 Customer-wise Udhar Breakdown</div>
     <table class="pdf-table">
       <thead>
         <tr>
-          <th>Category</th>
-          <th>Details / Customer</th>
-          <th>Amount (₹)</th>
+          <th>Customer Name</th>
+          <th>Udhar Diya (Taken)</th>
+          <th>Wapas Mila (Paid)</th>
+          <th>Remaining Balance</th>
         </tr>
       </thead>
-      <tbody id="pdfTransactionRows"></tbody>
+      <tbody id="pdfUdharTableBody">
+        <!-- Lines dynamically inserted -->
+      </tbody>
     </table>
 
-    <div class="pdf-footer">
-      <div class="pdf-footer-note">
-        This is a computer-generated statement. No manual signature required.<br>
-        Confidential • Maa Store Ledger System
-      </div>
-      <div class="pdf-signature">
-        <div class="pdf-signature-line"></div>
-        <label>Authorized Signatory</label>
-      </div>
+    <!-- Final Remaining Total -->
+    <div class="pdf-total-box">
+      <span>TOTAL KITNA PAISA LE NA BAKI HAI (RECEIVABLE):</span>
+      <span id="pdfTotalReceivable">₹ 0.00</span>
     </div>
   </div>
 
@@ -597,6 +492,8 @@
   <script src="app.js"></script>
 
   <script>
+    let customerBalancesMap = {};
+
     window.addEventListener('DOMContentLoaded', () => {
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('date').value = today;
@@ -614,6 +511,7 @@
     const personGroup = document.getElementById('personGroup');
     const personInput = document.getElementById('person_name');
     const customerList = document.getElementById('customerList');
+    const balanceInfo = document.getElementById('balanceInfo');
 
     function toggleNav() {
       document.getElementById('navDropdown').classList.toggle('active');
@@ -642,23 +540,56 @@
       }
     }
 
-    /* Clean Customer Dropdown without () or extra text */
-    async function loadCustomerDropdown() {
+    // Load Dropdown Options from Database
+    async function loadCustomerBalancesAndDropdown() {
       try {
         if (!supabaseClient) return;
+
         const { data, error } = await supabaseClient
-          .from('customer_ledger')
-          .select('customer_id, customer_name')
-          .order('customer_id', { ascending: true });
+          .from('daily_records')
+          .select('person_name, type, amount');
 
         if (error) throw error;
 
-        customerList.innerHTML = '';
-        (data || []).forEach(cust => {
-          customerList.innerHTML += `<option value="${cust.customer_name}">#${cust.customer_id} - ${cust.customer_name}</option>`;
+        customerBalancesMap = {};
+
+        (data || []).forEach(record => {
+          if (!record.person_name) return;
+          const name = record.person_name.trim();
+          const amt = parseFloat(record.amount) || 0;
+
+          if (!customerBalancesMap[name]) customerBalancesMap[name] = 0;
+
+          if (record.type === 'debt') customerBalancesMap[name] += amt;
+          else if (record.type === 'debt_repayment') customerBalancesMap[name] -= amt;
         });
+
+        customerList.innerHTML = '';
+        Object.keys(customerBalancesMap).forEach(name => {
+          const bal = customerBalancesMap[name];
+          const text = bal > 0 ? `Remaining: ₹${bal.toFixed(2)}` : 'Clear';
+          customerList.innerHTML += `<option value="${name}">${text}</option>`;
+        });
+
       } catch (err) {
-        console.error("Error fetching customer list:", err.message);
+        console.error("Error loading customer dropdown:", err.message);
+      }
+    }
+
+    function showSelectedCustomerBalance() {
+      const selectedName = personInput.value.trim();
+      if (customerBalancesMap.hasOwnProperty(selectedName)) {
+        const bal = customerBalancesMap[selectedName];
+        balanceInfo.style.display = 'block';
+        if (bal > 0) {
+          balanceInfo.innerHTML = `📌 <b>${selectedName}</b> se abhi <b>₹ ${bal.toFixed(2)}</b> lena baki hai.`;
+          balanceInfo.style.color = '#dc2626';
+        } else {
+          balanceInfo.innerHTML = `✅ <b>${selectedName}</b> ka koi udhar baki nahi hai (Clear).`;
+          balanceInfo.style.color = '#16a34a';
+        }
+      } else {
+        balanceInfo.style.display = 'none';
       }
     }
 
@@ -667,11 +598,12 @@
       if (selectedType === 'debt' || selectedType === 'debt_repayment') {
         personGroup.style.display = 'block';
         personInput.required = true;
-        await loadCustomerDropdown();
+        await loadCustomerBalancesAndDropdown();
       } else {
         personGroup.style.display = 'none';
         personInput.required = false;
         personInput.value = '';
+        balanceInfo.style.display = 'none';
       }
     }
 
@@ -715,8 +647,9 @@
         document.getElementById('amount').value = '';
         document.getElementById('description').value = '';
         personInput.value = '';
-        await loadCustomerDropdown();
-        updateFieldVisibility();
+        balanceInfo.style.display = 'none';
+        
+        await updateFieldVisibility();
       } catch (err) {
         alert('Error: ' + err.message);
       } finally {
@@ -725,18 +658,15 @@
       }
     });
 
+    /* PDF GENERATION */
     async function generatePDF() {
       const mode = document.getElementById('reportType').value;
-      let startDate = '';
-      let endDate = '';
-      let labelText = '';
-      let fileName = '';
+      let startDate = '', endDate = '', labelText = '', fileName = '';
 
       if (mode === 'daily') {
         const dateVal = document.getElementById('reportDate').value;
         if (!dateVal) return alert("Please select a date!");
-        startDate = dateVal;
-        endDate = dateVal;
+        startDate = dateVal; endDate = dateVal;
         labelText = `Date: ${dateVal}`;
         fileName = `MaaStore_Statement_${dateVal}.pdf`;
       } else if (mode === 'monthly') {
@@ -750,85 +680,81 @@
       } else {
         const yearVal = document.getElementById('reportYear').value;
         if (!yearVal) return alert("Please select a year!");
-        startDate = `${yearVal}-01-01`;
-        endDate = `${yearVal}-12-31`;
+        startDate = `${yearVal}-01-01`; endDate = `${yearVal}-12-31`;
         labelText = `Full Year ${yearVal}`;
         fileName = `MaaStore_Statement_${yearVal}.pdf`;
       }
 
       try {
-        const [salesRes, purchaseRes, expenseRes, dailyRes] = await Promise.all([
-          supabaseClient.from('sales').select('*').gte('date', startDate).lte('date', endDate),
-          supabaseClient.from('purchases').select('*').gte('date', startDate).lte('date', endDate),
-          supabaseClient.from('expenses').select('*').gte('date', startDate).lte('date', endDate),
-          supabaseClient.from('daily_records').select('*').gte('date', startDate).lte('date', endDate)
+        const [salesRes, purchaseRes, expenseRes, recordsRes] = await Promise.all([
+          supabaseClient.from('sales').select('amount').gte('date', startDate).lte('date', endDate),
+          supabaseClient.from('purchases').select('amount').gte('date', startDate).lte('date', endDate),
+          supabaseClient.from('expenses').select('amount').gte('date', startDate).lte('date', endDate),
+          supabaseClient.from('daily_records').select('person_name, type, amount').gte('date', startDate).lte('date', endDate)
         ]);
 
         if (salesRes.error) throw salesRes.error;
         if (purchaseRes.error) throw purchaseRes.error;
         if (expenseRes.error) throw expenseRes.error;
-        if (dailyRes.error) throw dailyRes.error;
+        if (recordsRes.error) throw recordsRes.error;
 
-        const totalSales = (salesRes.data || []).reduce((sum, item) => sum + parseFloat(item.amount), 0);
-        const totalPurchase = (purchaseRes.data || []).reduce((sum, item) => sum + parseFloat(item.amount), 0);
-        const totalExpense = (expenseRes.data || []).reduce((sum, item) => sum + parseFloat(item.amount), 0);
+        const totalSales = (salesRes.data || []).reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+        const totalPurchases = (purchaseRes.data || []).reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+        const totalExpenses = (expenseRes.data || []).reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+        const netProfit = totalSales - totalPurchases - totalExpenses;
 
-        let totalUdharGiven = 0;
-        let totalUdharReceived = 0;
+        const customerMap = {};
+        (recordsRes.data || []).forEach(item => {
+          if (!item.person_name) return;
+          const name = item.person_name.trim();
+          const amt = parseFloat(item.amount) || 0;
 
-        (dailyRes.data || []).forEach(item => {
-          if (item.type === 'debt') totalUdharGiven += parseFloat(item.amount);
-          if (item.type === 'debt_repayment') totalUdharReceived += parseFloat(item.amount);
+          if (!customerMap[name]) customerMap[name] = { given: 0, received: 0 };
+
+          if (item.type === 'debt') customerMap[name].given += amt;
+          if (item.type === 'debt_repayment') customerMap[name].received += amt;
         });
 
-        document.getElementById('pdfMetaPeriod').innerText = labelText;
-        document.getElementById('pdfMetaDate').innerText = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-        document.getElementById('pdfMetaRef').innerText = `MS-${Math.floor(100000 + Math.random() * 900000)}`;
+        const tbody = document.getElementById('pdfUdharTableBody');
+        tbody.innerHTML = '';
+        let grandTotalReceivable = 0;
 
-        document.getElementById('pdfSales').innerText = `₹ ${totalSales.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-        document.getElementById('pdfPurchase').innerText = `₹ ${totalPurchase.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-        document.getElementById('pdfExpense').innerText = `₹ ${totalExpense.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-        document.getElementById('pdfDebtGiven').innerText = `₹ ${totalUdharGiven.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-        document.getElementById('pdfDebtReceived').innerText = `₹ ${totalUdharReceived.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-
-        const rowsContainer = document.getElementById('pdfTransactionRows');
-        rowsContainer.innerHTML = '';
-
-        const allRecords = [
-          ...(salesRes.data || []).map(r => ({ typeKey: 'sales', category: 'Sales', details: r.description || 'General Sales', amount: r.amount })),
-          ...(purchaseRes.data || []).map(r => ({ typeKey: 'purchase', category: 'Purchase', details: r.description || 'Store Purchase', amount: r.amount })),
-          ...(expenseRes.data || []).map(r => ({ typeKey: 'expense', category: 'Expense', details: r.description || 'Misc Expense', amount: r.amount })),
-          ...(dailyRes.data || []).map(r => ({
-            typeKey: r.type,
-            category: r.type === 'debt' ? 'Udhar Diya' : 'Udhar Wapas Mila',
-            details: `${r.person_name} (${r.description || ''})`,
-            amount: r.amount
-          }))
-        ];
-
-        if (allRecords.length === 0) {
-          rowsContainer.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:12px;">No transactions recorded for this period.</td></tr>`;
+        const names = Object.keys(customerMap);
+        if (names.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8;">Is period me koi udhar record nahi hai.</td></tr>`;
         } else {
-          allRecords.forEach(rec => {
-            let amountClass = '';
-            if (rec.typeKey === 'debt') amountClass = 'amount-debt-given';
-            if (rec.typeKey === 'debt_repayment') amountClass = 'amount-debt-received';
+          names.forEach(name => {
+            const given = customerMap[name].given;
+            const received = customerMap[name].received;
+            const remaining = given - received;
+            if (remaining > 0) grandTotalReceivable += remaining;
 
-            rowsContainer.innerHTML += `
+            tbody.innerHTML += `
               <tr>
-                <td style="font-weight:600;">${rec.category}</td>
-                <td>${rec.details}</td>
-                <td class="${amountClass}">₹ ${parseFloat(rec.amount).toFixed(2)}</td>
+                <td><b>${name}</b></td>
+                <td>₹ ${given.toFixed(2)}</td>
+                <td>₹ ${received.toFixed(2)}</td>
+                <td style="font-weight:700; color:${remaining > 0 ? '#dc2626' : '#16a34a'};">₹ ${remaining.toFixed(2)}</td>
               </tr>
             `;
           });
         }
 
+        document.getElementById('pdfMetaPeriod').innerText = labelText;
+        document.getElementById('pdfMetaDate').innerText = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+        document.getElementById('pdfMetaRef').innerText = `MS-${Math.floor(100000 + Math.random() * 900000)}`;
+
+        document.getElementById('pdfTotalSales').innerText = `₹ ${totalSales.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('pdfTotalPurchases').innerText = `₹ ${totalPurchases.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('pdfTotalExpenses').innerText = `₹ ${totalExpenses.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('pdfNetProfit').innerText = `₹ ${netProfit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('pdfTotalReceivable').innerText = `₹ ${grandTotalReceivable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
         const element = document.getElementById('pdfContent');
         element.style.display = 'block';
 
         html2pdf().set({
-          margin: 8,
+          margin: 10,
           filename: fileName,
           html2canvas: { scale: 2, useCORS: true },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
